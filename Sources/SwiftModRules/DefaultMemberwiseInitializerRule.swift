@@ -327,24 +327,22 @@ private extension TypeSyntax {
 
     func attributed() -> TypeSyntax {
         if self.is(FunctionTypeSyntax.self) {
-            let attributes = AttributeListSyntax([
-                .attribute(
-                    AttributeSyntax(
-                        atSign: .atSignToken(),
-                        attributeName: IdentifierTypeSyntax(name: .identifier("escaping"))
-                            .with(\.trailingTrivia, .space)
-                    )
-                )
-            ])
-            let typeSyntax = AttributedTypeSyntax(
-                leadingTrivia: nil,
-                specifiers: [],
-                attributes: attributes,
-                baseType: self,
-                trailingTrivia: nil
-            )
             return TypeSyntax(
-                typeSyntax
+                AttributedTypeSyntax(
+                    leadingTrivia: nil,
+                    specifiers: [],
+                    attributes: AttributeListSyntax([
+                        .attribute(
+                            AttributeSyntax(
+                                atSign: .atSignToken(),
+                                attributeName: IdentifierTypeSyntax(name: .identifier("escaping"))
+                                    .with(\.trailingTrivia, .space)
+                            )
+                        )
+                    ]),
+                    baseType: self,
+                    trailingTrivia: nil
+                )
             )
         }
         else {
