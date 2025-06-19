@@ -51,7 +51,7 @@ public final class DefaultMemberwiseInitializerRule: RuleDefinition {
             """
     )
 
-    public struct Options: Codable {
+    public struct Options: Codable, Sendable {
         public var implicitInitializer: Bool?
         public var implicitInternal: Bool?
         public var ignoreClassesWithInheritance: Bool?
@@ -327,19 +327,24 @@ private extension TypeSyntax {
 
     func attributed() -> TypeSyntax {
         if self.is(FunctionTypeSyntax.self) {
-            return TypeSyntax(
-                AttributedTypeSyntax(
-                    attributes: AttributeListSyntax([
-                        .attribute(
-                            AttributeSyntax(
-                                atSign: .atSignToken(),
-                                attributeName: IdentifierTypeSyntax(name: .identifier("escaping"))
-                                    .with(\.trailingTrivia, .space)
-                            )
-                        )
-                    ]),
-                    baseType: self
+            let attributes = AttributeListSyntax([
+                .attribute(
+                    AttributeSyntax(
+                        atSign: .atSignToken(),
+                        attributeName: IdentifierTypeSyntax(name: .identifier("escaping"))
+                            .with(\.trailingTrivia, .space)
+                    )
                 )
+            ])
+            let typeSyntax = AttributedTypeSyntax(
+                leadingTrivia: nil,
+                specifiers: [],
+                attributes: attributes,
+                baseType: self,
+                trailingTrivia: nil
+            )
+            return TypeSyntax(
+                typeSyntax
             )
         }
         else {
